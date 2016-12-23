@@ -1,6 +1,6 @@
 <?php
   /* Check User Script */
-  error_reporting (0);
+  error_reporting (1);
   session_start();  // Start Session
 
   // Conver to simple variables
@@ -17,7 +17,7 @@
     </script>
     <?php
   }
-  if($username=="" && $pass!="")
+  else if($username=="" && $pass!="")
   {
     ?>
     <script type="text/javascript">
@@ -26,7 +26,7 @@
     </script>
     <?php
   }
-  if($username!="" && $pass=="")
+  else if($username!="" && $pass=="")
   {
     ?>
     <script type="text/javascript">
@@ -35,7 +35,7 @@
     </script>
     <?php
   }
-  if($username!="" && $pass=="")
+  else if($username!="" && $pass!="")
   {
     // Convert password to md5 hash
     $password = md5($pass);
@@ -49,26 +49,25 @@
    
     $sql = "SELECT* FROM user WHERE username = '$username' AND password = '$password'";
     $result = $koneksi->query($sql);
-
-    if ($result->num_rows ==1) {
+    if($op="in")
+    if ($result->num_rows ==1) 
+    {
         // output data of each row
         while($row = $result->fetch_assoc()) 
         {
-          if($op="in")
+          if($row['hak_akses']=="administrator")
           {
-            if($row['hak_akses']=="administrator")
-            {
-              $_SESSION['username']   = $row['username'];
-              $_SESSION['hak_akses']  = $row['hak_akses'];
-              $_SESSION['id_erci']    = $row['id_erci'];
-              header("location:homeadm.php?page=home");
-            }
+            $_SESSION['username']   = $row['username'];
+            $_SESSION['hak_akses']  = $row['hak_akses'];
+            $_SESSION['id_erci']    = $row['id_erci'];
+            header("location:homeadm.php?page=home");
           }
         }
     }
     else
     {
       echo "0 results";
+      header("location:index.html");
     }
   }
   $koneksi->close();
