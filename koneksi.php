@@ -1,16 +1,13 @@
 <?php
-  $server   = "localhost";
-  $user     = "root";
-  $password = "";
-  $db_name  = "db_erci";
+  $host     ='localhost';
+  $username ='root';
+  $password ='';
+  $db_name  ='db_erci';
+  $koneksi  = mysqli_connect($host,$username,$password);
 
-  $exe = mysql_connect($server,$user,$password,$db_name) or die("Gagal Koneksi".mysql_error());
-
-  mysql_select_db($db_name,$exe) or die("Gagal Koneksi ke Database".mysql_error());
-
-  if($exe)
+  if(!$koneksi)
   {
-    echo "Koneksi Berhasil";
+    echo "Gagal Koneksi";
   }
-  mysql_close($exe);
- ?>
+  mysqli_select_db($db_name,$koneksi);
+?>

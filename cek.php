@@ -1,57 +1,75 @@
 <?php
-/* Check User Script */
-error_reporting (1);
-session_start();  // Start Session
-include "koneksi.php";
-// Conver to simple variables
-$username = $_POST['UserName'];
-$password = $_POST['Passwod'];
+  /* Check User Script */
+  error_reporting (0);
+  session_start();  // Start Session
 
+  // Conver to simple variables
+  $username = $_POST['username'];
+  $pass     = $_POST['password'];
+  $op       = $_GET['op'];
 
-// Convert password to md5 hash
-$password = md5($password);
+  if($username=="" && $pass=="")
+  {
+    ?>
+    <script type="text/javascript">
+      alert("Login dan Password Kosong");
+      window.location="index.html";
+    </script>
+    <?php
+  }
+  if($username=="" && $pass!="")
+  {
+    ?>
+    <script type="text/javascript">
+      alert("Login Kosong");
+      window.location="index.html";
+    </script>
+    <?php
+  }
+  if($username!="" && $pass=="")
+  {
+    ?>
+    <script type="text/javascript">
+      alert("Password Kosong");
+      window.location="index.html";
+    </script>
+    <?php
+  }
+  if($username!="" && $pass=="")
+  {
+    // Convert password to md5 hash
+    $password = md5($pass);
+   
+    $koneksi = new mysqli("localhost","root","","db_erci");
+    //Cek Koneksi
+    if ($koneksi->connect_error) {
+      die("Koneksi Gagal: " . $koneksi->connect_error);
+    }
 
-// check if the user info validates the db
-$sql = mysql_query("SELECT * FROM user WHERE username='$username' AND password='$password'");
-$login_check = mysql_num_rows($sql);
+   
+    $sql = "SELECT* FROM user WHERE username = '$username' AND password = '$password'";
+    $result = $koneksi->query($sql);
 
-if($login_check > 0){
-    while($hasil = mysql_fetch_array($sql)){
-    
-        // Register some session variables!
-        $_SESSION['username'] = $hasil ['username'];
-		    $_SESSION['password'] = $hasil ['password'];
-        $_SESSION['hak_akses'] = $hasil ['hak_akses'];
-    		$_SESSION['id_erci'] = $hasil ['id_erci'];
-		
-        if ($hasil['hak_akses'] == "Administrator"){
-        echo "<script>
-          location.href='administrator/index.html'
-        </script>";
-        }
-        if ($hasil['hak_akses'] == "Pengurus"){
-        echo "<script>
-          location.href='pengurus/index.html'
-        </script>";
-        }
-        if ($hasil['hak_akses'] == "Member"){
-        echo "<script>
-          location.href='pengurus/index.html'
-        </script>";
-        }
-        if ($hasil['hak_akses'] == "Member"){
-        echo "<script>
-          location.href='pengurus/index.html'
-        </script>";
+    if ($result->num_rows ==1) {
+        // output data of each row
+        while($row = $result->fetch_assoc()) 
+        {
+          if($op="in")
+          {
+            if($row['hak_akses']=="administrator")
+            {
+              $_SESSION['username']   = $row['username'];
+              $_SESSION['hak_akses']  = $row['hak_akses'];
+              $_SESSION['id_erci']    = $row['id_erci'];
+              header("location:homeadm.php?page=home");
+            }
+          }
         }
     }
-}
-else
-{
-echo "
-	<script language='javascript'>
-	alert ('User atau Password Salah');
-	location.href='index.erci';
-</script>";
-}
+    else
+    {
+      echo "0 results";
+    }
+  }
+  $koneksi->close();
 ?>
