@@ -60,14 +60,18 @@
             $_SESSION['username']   = $row['username'];
             $_SESSION['hak_akses']  = $row['hak_akses'];
             $_SESSION['id_erci']    = $row['id_erci'];
-            header("location:homeadm.php?page=home");
+            header("location:homeadm.html?page=home");
           }
         }
     }
     else
     {
-      echo "0 results";
-      header("location:index.html");
+      ?>
+      <script type="text/javascript">
+      alert("Gagal Login");
+      window.location="index.html";
+      </script>
+      <?php 
     }
   }
   $koneksi->close();
